@@ -19,7 +19,7 @@ class DefaultHandler(tornado.web.RequestHandler):
         return input_data + ' : default predict \ndata = ' + str(data)
 
 
-class SuperService():
+class SuperService:
     def __init__(self, handler):
         self.handler = handler
 

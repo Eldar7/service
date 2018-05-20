@@ -6,7 +6,10 @@ import tornado.escape
 class ModelHandler(DefaultHandler):
     def predict(self, input_data):
         data = tornado.escape.json_decode(self.request.body)
-        return input_data+' : model predict\ndata = '+str(data)
+        res = 'input_data+ : model predict\n'
+        a = int(data['a'])
+        b = int(data['b'])
+        return res+'summa = '+str(a+b)
 
 ss = SuperService(ModelHandler)
 ss.run('model')
