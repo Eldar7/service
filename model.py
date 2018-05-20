@@ -1,11 +1,12 @@
 from service import SuperService
 from service import DefaultHandler
+import tornado.escape
 
 
 class ModelHandler(DefaultHandler):
-    @staticmethod
-    def predict(input_data):
-        return input_data+' : model predict'
+    def predict(self, input_data):
+        data = tornado.escape.json_decode(self.request.body)
+        return input_data+' : model predict\ndata = '+str(data)
 
 ss = SuperService(ModelHandler)
 ss.run('model')
