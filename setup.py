@@ -8,4 +8,6 @@ setup(name='service',
       author_email='shyshyev@gmail.com',
       license='MIT',
       packages=['service'],
-      zip_safe=False)
+      zip_safe=False,
+      data_files=[('service', ['service/logging.conf'])],
+      )
