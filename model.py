@@ -1,3 +1,8 @@
+"""
+Example of usage.
+You can execute 'pip install .' and run model.py from any place.
+If you already have this package installed use 'pip install . --upgrade'
+"""
 from service import SuperService
 
 
@@ -8,5 +13,6 @@ def predict(data):
     return res + 'sum = ' + str(a + b)
 
 
-ss = SuperService(predict)
-ss.run('model')
+if __name__ == "__main__":
+    ss = SuperService(predict, 1111)
+    ss.run('model')

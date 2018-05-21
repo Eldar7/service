@@ -18,8 +18,9 @@ class DefaultHandler(tornado.web.RequestHandler):
 
 
 class SuperService:
-    def __init__(self, predict):
+    def __init__(self, predict, port):
         self.predict = predict
+        self.port = port
 
     def make_app(self, input_data):
         return tornado.web.Application([
@@ -28,7 +29,7 @@ class SuperService:
 
     def run(self, input_data):
         app = self.make_app(input_data)
-        app.listen(1111)
+        app.listen(self.port)
         tornado.ioloop.IOLoop.current().start()
 
 
