@@ -1,3 +1,4 @@
 # service
 
-pip install git+https://git.ftc.ru/ml/service.git
+## Install
+    pip install git+ssh://git@git.ftc.ru/ml/service.git
