@@ -65,7 +65,7 @@ class DefaultHandler(tornado.web.RequestHandler):
 
 
 class SuperService:
-    def __init__(self, predict, port, n_proc):
+    def __init__(self, predict, port=1111, n_proc=1):
         self.predict = predict
         self.port = port
         self.n_proc = n_proc
