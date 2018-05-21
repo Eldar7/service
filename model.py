@@ -14,5 +14,7 @@ def predict(data):
 
 
 if __name__ == "__main__":
-    ss = SuperService(predict, 1111)
+    #https://github.com/tornadoweb/tornado/issues/1669
+    #on Windows support only n_proc=1
+    ss = SuperService(predict, port=1111, n_proc=1)
     ss.run('model')
