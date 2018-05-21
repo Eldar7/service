@@ -4,28 +4,26 @@ import tornado.escape
 
 
 class DefaultHandler(tornado.web.RequestHandler):
-    def initialize(self, input_data):
+    def initialize(self, input_data, predict):
         self.input_data = input_data
+        self.predict = predict
 
     def get(self):
-        self.write("GET: Hello, world " + self.input_data)
+        self.write("GET: Hello, world from : " + self.input_data)
 
     def post(self):
-        self.write("POST: " + self.predict(self.input_data))
-
-    def predict(self, input_data):
         # https://stackoverflow.com/a/28140966/2436590
         data = tornado.escape.json_decode(self.request.body)
-        return input_data + ' : default predict \ndata = ' + str(data)
+        self.write("POST: " + self.predict(data))
 
 
 class SuperService:
-    def __init__(self, handler):
-        self.handler = handler
+    def __init__(self, predict):
+        self.predict = predict
 
     def make_app(self, input_data):
         return tornado.web.Application([
-            (r"/", self.handler, dict(input_data=input_data)),
+            (r"/", DefaultHandler, dict(input_data=input_data, predict=self.predict)),
         ])
 
     def run(self, input_data):
@@ -34,6 +32,10 @@ class SuperService:
         tornado.ioloop.IOLoop.current().start()
 
 
+def default_predict(data):
+    return 'default predict ' + str(data)
+
+
 if __name__ == "__main__":
-    ss = SuperService(DefaultHandler)
-    ss.run('super')
+    ss = SuperService(default_predict)
+    ss.run('default')
