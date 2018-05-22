@@ -65,15 +65,20 @@ class DefaultHandler(tornado.web.RequestHandler):
 
 
 class SuperService:
-    def __init__(self, predict, port=1111, n_proc=1):
-        self.predict = predict
+    def __init__(self, Predictor, port=1111, n_proc=1):
         self.port = port
         self.n_proc = n_proc
+        try:
+            self.Predictor = Predictor('SuperService\t')#TODO передать параметры инициализации предиктора параметром в SuperService.__init__
+            logger.info('Predictor successfully created')#TODO почему-то из этого места логи не выводятся, разобраться
+        except Exception as e:
+            logger.exception('Can create Predictor with error: ' + str(e))
+            raise e
 
     def make_service(self, input_data):
         logger.info('Start configuring service')
         service_settings = [
-            (r"/", DefaultHandler, dict(input_data=input_data, predict=self.predict)),
+            (r"/", DefaultHandler, dict(input_data=input_data, predict=self.Predictor.predict)),
         ]
         logger.info(service_settings)
 
@@ -110,10 +115,13 @@ class SuperService:
         self.start_service(service)
 
 
-def default_predict(data):
-    return 'default predict ' + str(data)
+class Predictor:
+    def __init__(self, message):
+        self.message = message
+    def predict(self, data):
+        return self.message + str(data)
 
 
 if __name__ == "__main__":
-    ss = SuperService(default_predict)
+    ss = SuperService(Predictor)
     ss.run('default')
