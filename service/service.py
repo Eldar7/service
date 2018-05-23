@@ -65,12 +65,15 @@ class DefaultHandler(tornado.web.RequestHandler):
 
 
 class SuperService:
-    def __init__(self, Predictor, port=1111, n_proc=1):
+    def __init__(self, url_predictor_dict, port=1111, n_proc=1):
+        logging_conf_updater()
         self.port = port
         self.n_proc = n_proc
         try:
-            self.Predictor = Predictor('SuperService\t')#TODO передать параметры инициализации предиктора параметром в SuperService.__init__
-            logger.info('Predictor successfully created')#TODO почему-то из этого места логи не выводятся, разобраться
+            self.url_predictor_dict = dict()
+            for url in url_predictor_dict:
+                self.url_predictor_dict[url] = url_predictor_dict[url](url)
+            logger.info('Predictor(s) '+str(url_predictor_dict)+' successfully created')#TODO почему-то из этого места логи не выводятся, разобраться
         except Exception as e:
             logger.exception('Can create Predictor with error: ' + str(e))
             raise e
@@ -78,7 +81,8 @@ class SuperService:
     def make_service(self, input_data):
         logger.info('Start configuring service')
         service_settings = [
-            (r"/", DefaultHandler, dict(input_data=input_data, predict=self.Predictor.predict)),
+            (url, DefaultHandler, dict(input_data=input_data, predict=self.url_predictor_dict[url].predict))
+            for url in self.url_predictor_dict
         ]
         logger.info(service_settings)
 
@@ -108,9 +112,6 @@ class SuperService:
         tornado.ioloop.IOLoop.current().start()
 
     def run(self, input_data):
-        logging_conf_updater()
-        print(logging.getLevelName(logger.getEffectiveLevel()))
-
         service = self.make_service(input_data)
         self.start_service(service)
 
@@ -123,5 +124,5 @@ class Predictor:
 
 
 if __name__ == "__main__":
-    ss = SuperService(Predictor)
+    ss = SuperService({'/':Predictor})
     ss.run('default')
